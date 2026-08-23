@@ -62,7 +62,6 @@ const generateAccessAndRefreshTokens = async (
     }
 };
 
-
 const regesterUser = asyncHandler(async (req, res) => {
 
     const { fullName, email, username, password } = req.body;
@@ -140,7 +139,6 @@ const loginUser = async (req: any, res: Response): Promise<any> => {
         );
 };
 
-
 const logOutUser = asyncHandler(async (req, res: Response) => {
     const user = req.user as IUser// we have attached the user to the req object in the auth middleware so we can access it here
     if (!user || typeof user === "string") {
@@ -172,8 +170,6 @@ const logOutUser = asyncHandler(async (req, res: Response) => {
             new ApiResponse(200, "User logged out successfully", {})
         )
 });
-
-
 
 export  {
     generateAccessAndRefreshTokens,

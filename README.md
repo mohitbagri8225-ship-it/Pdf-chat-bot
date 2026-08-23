@@ -78,7 +78,7 @@ Each node operates on a shared state (`chatId`, `userId`, `documentId`, `questio
 | **Vector Database** | Pinecone |
 | **Database** | MongoDB with Mongoose |
 | **Authentication** | JWT |
-| **File Handling** | Multer, PDFLoader (LangChain) |
+| **File Handling** | Multer,cloudinary, PDFLoader (LangChain) |
 
 ---
 

@@ -82,7 +82,7 @@ function TopBar({ chatHistory }: topBarProps) {
         </h2>
 
         <p className="text-xs text-neutral-500">
-          {file ? file.name : "No document selected"}
+          {chatHistory.length == 0 ? "No document selected" : null}
         </p>
       </div>
 

@@ -1,32 +1,58 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/useContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+// import { Loader } from "./ChatInput";
+
+interface SideChat {
+  chatId: string;
+  question: string;
+}
 
 function Sidebar() {
 
   const navigate = useNavigate();
-  const {user} = useContext(UserContext);   
+  const { user } = useContext(UserContext);
+  const [sideChats, setSideChats] = useState<SideChat[]>([]);
 
 
-  const HandleNewChat = async ()=>{
+  const HandleNewChat = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/api/v1/chat/create-chat`,
         {
-          withCredentials:true
+          withCredentials: true
         }
       )
       const nchatId = response.data.data.chatId;
       navigate(`chat/${nchatId}`);
     } catch (error) {
-      if(axios.isAxiosError(error)){
+      if (axios.isAxiosError(error)) {
         alert("error");
-      }else{
+      } else {
         alert("error");
       }
     }
   }
-  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/v1/chat/get-side-chats", {
+          withCredentials: true
+        });
+        const chats = response.data.data;
+        setSideChats(chats);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          alert(error.response?.data?.message || "Side check fetching failed");
+        } else {
+          alert("fetching of side chat failed");
+        }
+      }
+    }
+    fetchData();
+  }, [])
+
   return (
     <aside className="w-64 bg-neutral-900 border-r border-neutral-700 flex flex-col">
 
@@ -44,7 +70,7 @@ function Sidebar() {
       {/* New Chat */}
       <div className="p-4">
         <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-neutral-700 hover:bg-neutral-800 transition cursor-pointer"
-           onClick={HandleNewChat}  >
+          onClick={HandleNewChat}  >
           <span className="text-xl">+</span>
           <span>New Chat</span>
         </button>
@@ -57,17 +83,19 @@ function Sidebar() {
           RECENT CHATS
         </p>
 
-        <button className="w-full text-left px-3 py-3 rounded-lg hover:bg-neutral-800 transition text-sm text-neutral-300 truncate">
-          Computer Networks Notes
-        </button>
-
-        <button className="w-full text-left px-3 py-3 rounded-lg hover:bg-neutral-800 transition text-sm text-neutral-300 truncate">
-          Operating System PDF
-        </button>
-
-        <button className="w-full text-left px-3 py-3 rounded-lg hover:bg-neutral-800 transition text-sm text-neutral-300 truncate">
-          DBMS Interview Questions
-        </button>
+        {
+          sideChats.map((chat) => {
+            return (
+              <button
+                key={chat.chatId}
+                onClick={() => navigate(`/chat/${chat.chatId}`)}
+                className="w-full text-left px-3 py-3 rounded-lg hover:bg-neutral-800 transition text-sm text-neutral-300 truncate"
+              >
+                {chat.question}
+              </button>
+            );
+          })
+        }
 
       </div>
 

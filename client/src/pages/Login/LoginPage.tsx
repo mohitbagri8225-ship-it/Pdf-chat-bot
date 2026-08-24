@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
 
 function LoginPage() {
 
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
   const [formData,setFormData] = useState({
     email:"",
@@ -26,7 +26,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const response = await axios.post("http://localhost:5000/api/v1/user/login",formData,{withCredentials:true});
       console.log(response);
       alert("log in successfull");
-
+ 
       navigate('/');
     } catch (error) {
       if (axios.isAxiosError(error)) {

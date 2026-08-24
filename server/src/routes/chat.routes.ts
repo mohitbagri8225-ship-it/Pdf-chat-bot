@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {askQuestion, createChat, getAllChats, getChatHistory, uploadfileInPincode} from "../controllers/chat.controller.js"
+import {askQuestion, createChat, getAllChats, getChatHistory, getSideChats, uploadfileInPincode} from "../controllers/chat.controller.js"
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJwt } from "../middleware/verifyjwt.middleware.js";
 
@@ -15,6 +15,7 @@ router.route('/get-response').post(verifyJwt,askQuestion);
 router.route('/get-history').post(verifyJwt,getChatHistory);
 router.route('/create-chat').get(verifyJwt,createChat);
 router.route('/get-all-chats').post(verifyJwt,getAllChats);
+router.route('/get-side-chats').get(verifyJwt,getSideChats);
 
 
 export default router;

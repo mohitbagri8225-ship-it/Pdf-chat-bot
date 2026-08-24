@@ -8,6 +8,11 @@ import { getAnswer } from "../rag/getResponse.js";
 import { Chat } from "../models/chat.model.js";
 import { randomUUID } from "crypto";
 
+interface sideChat {
+    chatId: string,
+    question: string
+}
+
 
 const uploadfileInPincode = asyncHandler(
     async (req: Request, res: Response) => {
@@ -115,16 +120,16 @@ const getChatHistory = asyncHandler(async (req: Request, res: Response) => {
     });
 });
 
-const askQuestion = asyncHandler(async (req: Request, res: Response) => { 
+const askQuestion = asyncHandler(async (req: Request, res: Response) => {
 
     const { chatId, question } = req.body;
     const userId = req.user.id.toString();
     const chat = await Chat.findById(chatId);
 
-    console.log("chat",chat);
-    const documentId= chat?.documents.at(-1);
+    console.log("chat", chat);
+    const documentId = chat?.documents.at(-1);
 
-    if(!documentId){
+    if (!documentId) {
         throw new apiError("Error in finding documentId", 400);
     }
 
@@ -177,10 +182,46 @@ const getAllChats = asyncHandler(async (req, res) => {
 });
 
 
+const getSideChats = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  if (!userId) {
+    throw new apiError("User ID not found", 401);
+  }
+
+  // Get messages in chronological order
+  const messages = await Message.find({ userId }).sort({ seq: 1 });
+
+  // Store only the first question for each chatId
+  const questionMap = new Map<string, string>();
+
+  messages.forEach((message) => {
+    const chatId = String(message.chatId);
+
+    if (!questionMap.has(chatId)) {
+      questionMap.set(chatId, message.question);
+    }
+  });
+
+  // Convert Map to sidebar data
+  const data: sideChat[] = Array.from(questionMap.entries()).map(
+    ([chatId, question]) => ({
+      chatId,
+      question,
+    })
+  );
+
+  return res.status(200).json({
+    success: true,
+    data,
+  });
+});
+
 export {
     uploadfileInPincode,
     getChatHistory,
     askQuestion,
     createChat,
-    getAllChats
+    getAllChats,
+    getSideChats
 };

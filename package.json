@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "bcrypt": "^6.0.0"
+    "@tailwindcss/vite": "^4.3.3",
+    "bcrypt": "^6.0.0",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0"

@@ -5,11 +5,13 @@ import express from "express"
 import { EmbedAndStore } from './rag/embeddings/embeddings.js';
 
 const app = express();
- 
-app.use(cors({//comm btw server and client
-    origin: process.env.CLIENT_URL,
-    credentials: true
-}));
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
  
 app.use(express.json({ limit: '16kb' })); //prse json body
  

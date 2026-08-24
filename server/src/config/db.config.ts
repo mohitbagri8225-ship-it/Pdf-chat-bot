@@ -8,7 +8,7 @@ const connectDB = async () => {
     const connectionInstance = await mongoose.connect(
       process.env.DB_URI as string,
       {
-        dbName:"mega"
+        dbName:process.env.DB_NAME!
       }
     );
 

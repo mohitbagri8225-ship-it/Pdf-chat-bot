@@ -97,9 +97,11 @@ const regesterUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = async (req: any, res: Response): Promise<any> => {
+    console.log(req.body);
     const { email, username, password } = req.body;
+    
 
-    if (!(email || username) || !password) {
+    if (!email  || !password) {
         throw new apiError("All fields are required", 400);
     }
 
@@ -171,9 +173,21 @@ const logOutUser = asyncHandler(async (req, res: Response) => {
         )
 });
 
+const getUser = asyncHandler(async (req,res)=>{
+    console.log(req.user);
+    
+   return res.status(201).json(
+        new ApiResponse(201, "User fetched successfully", {
+            fullName:req.user.fullName,
+            email:req.user.email
+        })
+    )
+})
+
 export  {
     generateAccessAndRefreshTokens,
     logOutUser,
     regesterUser,
-    loginUser
+    loginUser,
+    getUser
 };

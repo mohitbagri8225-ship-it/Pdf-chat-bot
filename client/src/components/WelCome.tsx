@@ -1,3 +1,6 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 interface WelcomeScreenProps {
   loading: boolean;
   chatHistory: ChatHistory[];
@@ -16,15 +19,23 @@ interface SuggestionProps {
   onClick: () => void;
 }
 
+/*
+ * Convert escaped characters coming from the backend
+ * into actual formatting characters.
+ */
+const formatAnswer = (text: string) => {
+  return text
+    .replace(/\\n/g, "\n")
+    .replace(/\\t/g, "\t")
+    .replace(/\r\n/g, "\n");
+};
+
 function WelcomeScreen({
   loading,
   chatHistory,
 }: WelcomeScreenProps) {
-
   const handleSuggestion = (question: string) => {
     console.log("Selected question:", question);
-
-    // Later you can pass this to ChatInput
   };
 
   /*
@@ -49,12 +60,12 @@ function WelcomeScreen({
   /*
    * CHAT HISTORY
    */
-  if (chatHistory?.length > 0) {
+  if (chatHistory.length > 0) {
     return (
       <div className="h-full overflow-y-auto">
         <div className="max-w-3xl mx-auto px-4 py-8 pb-32">
 
-          {chatHistory?.map((chat) => (
+          {chatHistory.map((chat) => (
             <div
               key={`${chat.chatId}-${chat.seq}`}
               className="space-y-6 mb-8"
@@ -80,12 +91,106 @@ function WelcomeScreen({
                 </div>
 
                 {/* ANSWER */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm md:text-base leading-7 whitespace-pre-wrap text-neutral-200">
-                    {chat.answer}
-                  </p>
-                </div>
+                <div className="flex-1 min-w-0 text-neutral-200">
 
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({ children }) => (
+                        <h1 className="text-2xl font-bold text-white mt-6 mb-4">
+                          {children}
+                        </h1>
+                      ),
+
+                      h2: ({ children }) => (
+                        <h2 className="text-xl font-bold text-white mt-6 mb-3">
+                          {children}
+                        </h2>
+                      ),
+
+                      h3: ({ children }) => (
+                        <h3 className="text-lg font-semibold text-white mt-5 mb-2">
+                          {children}
+                        </h3>
+                      ),
+
+                      p: ({ children }) => (
+                        <p className="text-sm md:text-base leading-7 mb-4 whitespace-pre-wrap">
+                          {children}
+                        </p>
+                      ),
+
+                      ul: ({ children }) => (
+                        <ul className="list-disc ml-6 mb-4 space-y-2">
+                          {children}
+                        </ul>
+                      ),
+
+                      ol: ({ children }) => (
+                        <ol className="list-decimal ml-6 mb-4 space-y-2">
+                          {children}
+                        </ol>
+                      ),
+
+                      li: ({ children }) => (
+                        <li className="text-sm md:text-base leading-7">
+                          {children}
+                        </li>
+                      ),
+
+                      strong: ({ children }) => (
+                        <strong className="font-semibold text-white">
+                          {children}
+                        </strong>
+                      ),
+
+                      blockquote: ({ children }) => (
+                        <blockquote className="border-l-4 border-blue-600 pl-4 my-4 text-neutral-400">
+                          {children}
+                        </blockquote>
+                      ),
+
+                      table: ({ children }) => (
+                        <div className="overflow-x-auto my-5 rounded-lg border border-neutral-700">
+                          <table className="w-full text-sm border-collapse">
+                            {children}
+                          </table>
+                        </div>
+                      ),
+
+                      thead: ({ children }) => (
+                        <thead className="bg-neutral-800">
+                          {children}
+                        </thead>
+                      ),
+
+                      th: ({ children }) => (
+                        <th className="border border-neutral-700 px-4 py-3 text-left font-semibold text-white">
+                          {children}
+                        </th>
+                      ),
+
+                      td: ({ children }) => (
+                        <td className="border border-neutral-700 px-4 py-3 text-neutral-300">
+                          {children}
+                        </td>
+                      ),
+
+                      hr: () => (
+                        <hr className="border-neutral-700 my-6" />
+                      ),
+
+                      code: ({ children }) => (
+                        <code className="bg-neutral-800 px-1.5 py-0.5 rounded text-blue-300">
+                          {children}
+                        </code>
+                      ),
+                    }}
+                  >
+                    {formatAnswer(chat.answer)}
+                  </ReactMarkdown>
+
+                </div>
               </div>
 
             </div>

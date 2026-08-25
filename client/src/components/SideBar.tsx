@@ -1,8 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/useContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-// import { Loader } from "./ChatInput";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface SideChat {
   chatId: string;
@@ -10,48 +9,60 @@ interface SideChat {
 }
 
 function Sidebar() {
-
   const navigate = useNavigate();
-  const { user } = useContext(UserContext);
-  const [sideChats, setSideChats] = useState<SideChat[]>([]);
+  const location = useLocation();
 
+  const { user } = useContext(UserContext);
+
+  const [sideChats, setSideChats] = useState<SideChat[]>([]);
 
   const HandleNewChat = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/v1/chat/create-chat`,
+      const response = await axios.get(
+        "http://localhost:5000/api/v1/chat/create-chat",
         {
-          withCredentials: true
+          withCredentials: true,
         }
-      )
+      );
+
       const nchatId = response.data.data.chatId;
-      navigate(`chat/${nchatId}`);
+
+      navigate(`/chat/${nchatId}`);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        alert("error");
+        alert(error.response?.data?.message || "Error creating new chat");
       } else {
-        alert("error");
+        alert("Error creating new chat");
       }
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/v1/chat/get-side-chats", {
-          withCredentials: true
-        });
+        const response = await axios.get(
+          "http://localhost:5000/api/v1/chat/get-side-chats",
+          {
+            withCredentials: true,
+          }
+        );
+
         const chats = response.data.data;
+
         setSideChats(chats);
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          alert(error.response?.data?.message || "Side check fetching failed");
+          alert(
+            error.response?.data?.message || "Side chat fetching failed"
+          );
         } else {
-          alert("fetching of side chat failed");
+          alert("Fetching of side chats failed");
         }
       }
-    }
+    };
+
     fetchData();
-  }, [])
+  }, []);
 
   return (
     <aside className="w-64 bg-neutral-900 border-r border-neutral-700 flex flex-col">
@@ -69,8 +80,10 @@ function Sidebar() {
 
       {/* New Chat */}
       <div className="p-4">
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-neutral-700 hover:bg-neutral-800 transition cursor-pointer"
-          onClick={HandleNewChat}  >
+        <button
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-neutral-700 hover:bg-neutral-800 transition cursor-pointer"
+          onClick={HandleNewChat}
+        >
           <span className="text-xl">+</span>
           <span>New Chat</span>
         </button>
@@ -83,19 +96,27 @@ function Sidebar() {
           RECENT CHATS
         </p>
 
-        {
-          sideChats.map((chat) => {
-            return (
-              <button
-                key={chat.chatId}
-                onClick={() => navigate(`/chat/${chat.chatId}`)}
-                className="w-full text-left px-3 py-3 rounded-lg hover:bg-neutral-800 transition text-sm text-neutral-300 truncate"
-              >
-                {chat.question}
-              </button>
-            );
-          })
-        }
+        {sideChats.map((chat) => {
+
+          // Check whether this chat is currently selected
+          const isSelected =location.pathname === `/chat/${chat.chatId}`;
+
+          return (
+            <button
+              key={chat.chatId}
+              onClick={() => navigate(`/chat/${chat.chatId}`)}
+              className={`w-full text-left px-3 py-3 rounded-lg transition text-sm truncate mb-1
+                ${
+                  isSelected
+                    ? "bg-neutral-800 text-white font-medium border-l-2 border-blue-500"
+                    : "text-neutral-300 hover:bg-neutral-800"
+                }
+              `}
+            >
+              {chat.question}
+            </button>
+          );
+        })}
 
       </div>
 

@@ -11,7 +11,6 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<Signup />} />
 
-
       <Route element={<ProtectedRoute/>}>
         <Route path="/" element={<HomePage />} />
         <Route path="/chat/:chatId" element={<HomePage />} />

@@ -48,7 +48,7 @@ function ChatPage() {
   }, [chatId]);
 
   return (
-    <div className="h-screen bg-neutral-900 text-white flex flex-col overflow-hidden">
+    <div className="h-screen bg-black text-neutral-200 flex flex-col overflow-hidden">
       
       {/* Top bar */}
       <TopBar  chatHistory={chatHistory} />

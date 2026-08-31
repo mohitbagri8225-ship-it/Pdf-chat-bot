@@ -6,8 +6,7 @@ function Home() {
 
   
   return (
-    <div className="h-screen bg-neutral-800 text-white flex overflow-hidden">
-
+    <div className="h-screen bg-black text-white flex overflow-hidden">
       {/* Sidebar */}
       <Sidebar />
 

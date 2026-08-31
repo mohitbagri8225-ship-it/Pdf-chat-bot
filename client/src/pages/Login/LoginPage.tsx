@@ -1,32 +1,45 @@
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/useContext";
 
 function LoginPage() {
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext);  
+  
+  if(user.isLoggedIn === null){
+     <div>loading</div>
+  }else{
+    navigate('/');
+  }
 
-  const [formData,setFormData] = useState({
-    email:"",
-    password:""
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
   })
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    }); 
+    });
   };
 
-  const handleOnSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
+  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       console.log(formData);
-      const response = await axios.post("http://localhost:5000/api/v1/user/login",formData,{withCredentials:true});
+      const response = await axios.post("http://localhost:5000/api/v1/user/login", formData, { withCredentials: true });
       console.log(response);
       alert("log in successfull");
- 
+      setUser(
+        {
+          ...user,
+          isLoggedIn: true
+        }
+      );
       navigate('/');
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -65,8 +78,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               </label>
 
               <input
-              onChange={handleChange}
-               name="email"
+                onChange={handleChange}
+                name="email"
                 type="email"
                 placeholder="you@example.com"
                 className="w-full px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-white placeholder-neutral-500 outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition"
@@ -89,7 +102,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               </div>
 
               <input
-              onChange={handleChange}
+                onChange={handleChange}
                 name="password"
                 type="password"
                 placeholder="••••••••"
@@ -100,7 +113,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             {/* Button */}
             <button
               type="submit"
-              className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition duration-200"
+              className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition duration-200 cursor-pointer"
             >
               Sign In
             </button>

@@ -5,7 +5,7 @@ import { retrieve } from "../retriever/retriever.js";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 const llm = new ChatGoogleGenerativeAI({
-    model: "gemini-3.5-flash",
+    model: "gemini-3.6-flash",
     temperature: 0,
 });
 

@@ -1,6 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
+import { UserContext } from "../context/useContext";
 
 interface ChatHistory {
   question: string;
@@ -27,6 +28,7 @@ function ChatInput({ setChatHistory }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const { chatId } = useParams<{ chatId: string }>();
   const [loading, setLoading] = useState(false);
+  const { fetchData } = useContext(UserContext);
 
   const handleOnSend = async () => {
     if (!message.trim()) return;
@@ -66,6 +68,7 @@ function ChatInput({ setChatHistory }: ChatInputProps) {
       messages.sort((a, b) => a.seq - b.seq);
 
       setChatHistory(messages);
+      await fetchData();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         alert(error.response?.data?.message || "failed");
@@ -85,6 +88,12 @@ function ChatInput({ setChatHistory }: ChatInputProps) {
 
           {/* Input */}
           <textarea
+            onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleOnSend();
+                }
+              }}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Ask anything about your document..."

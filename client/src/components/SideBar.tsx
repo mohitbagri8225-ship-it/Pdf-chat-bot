@@ -1,20 +1,13 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { UserContext } from "../context/useContext";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
-
-interface SideChat {
-  chatId: string;
-  question: string;
-}
+import { useNavigate, useLocation, redirect } from "react-router-dom";
 
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { user } = useContext(UserContext);
-
-  const [sideChats, setSideChats] = useState<SideChat[]>([]);
+  const { user, sideChats, fetchData } = useContext(UserContext);
 
   const HandleNewChat = async () => {
     try {
@@ -27,49 +20,28 @@ function Sidebar() {
 
       const nchatId = response.data.data.chatId;
 
+      // Refresh sidebar chats
+      await fetchData();
       navigate(`/chat/${nchatId}`);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        alert(error.response?.data?.message || "Error creating new chat");
+        alert(
+          error.response?.data?.message ||
+          "Error creating new chat"
+        );
       } else {
         alert("Error creating new chat");
       }
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/v1/chat/get-side-chats",
-          {
-            withCredentials: true,
-          }
-        );
-
-        const chats = response.data.data;
-
-        setSideChats(chats);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          alert(
-            error.response?.data?.message || "Side chat fetching failed"
-          );
-        } else {
-          alert("Fetching of side chats failed");
-        }
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
-    <aside className="w-64 bg-neutral-900 border-r border-neutral-700 flex flex-col">
+    <aside className="w-64 bg-black border-r border-neutral-700 flex flex-col chat-scrollbar">
 
       {/* Logo */}
       <div className="p-5 border-b border-neutral-700">
-        <h1 className="text-2xl font-bold text-blue-600">
+        <h1 onClick={()=>redirect('/')}
+         className="text-2xl font-bold bg-linear-to-b from-sky-800 via-neutral-200 to-blue-700 bg-clip-text text-transparent cursor-pointer">
           DocMind
         </h1>
 
@@ -97,21 +69,18 @@ function Sidebar() {
         </p>
 
         {sideChats.map((chat) => {
-
-          // Check whether this chat is currently selected
-          const isSelected =location.pathname === `/chat/${chat.chatId}`;
-
+          const isSelected =
+            location.pathname === `/chat/${chat.chatId}`;
           return (
             <button
               key={chat.chatId}
-              onClick={() => navigate(`/chat/${chat.chatId}`)}
-              className={`w-full text-left px-3 py-3 rounded-lg transition text-sm truncate mb-1
-                ${
-                  isSelected
-                    ? "bg-neutral-800 text-white font-medium border-l-2 border-blue-500"
-                    : "text-neutral-300 hover:bg-neutral-800"
-                }
-              `}
+              onClick={() =>
+                navigate(`/chat/${chat.chatId}`)
+              }
+              className={`w-full text-left px-3 py-3 rounded-lg transition text-md truncate mb-1 cursor-pointer ${isSelected
+                  ? "bg-neutral-800 text-white text-md border-l-2 border-blue-500"
+                  : "text-neutral-300 hover:bg-neutral-900"
+                }`}
             >
               {chat.question}
             </button>

@@ -5,10 +5,12 @@ import dotenv from "dotenv"
 dotenv.config();
 
 export async function loadDocument(filePath:string){
-     const textSplitter = new RecursiveCharacterTextSplitter({
+     const textSplitter = new RecursiveCharacterTextSplitter(
+        {
         chunkSize: 500,
         chunkOverlap: 100,
-    });
+    }
+);
 
     const loader = new PDFLoader(filePath,{splitPages:false});
     const doc = await loader.load();

@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-
 interface ChatHistory {
   question: string;
   answer: string;
@@ -18,7 +17,7 @@ interface topBarProps {
 function TopBar({ chatHistory }: topBarProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  // const [uploaded,setuploaded] = useState(false);
+  // const [uploaded,setuploaded] = useState(false); 
 
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

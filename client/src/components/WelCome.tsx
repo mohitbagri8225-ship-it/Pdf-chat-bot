@@ -73,7 +73,7 @@ function WelcomeScreen({
 
               {/* USER MESSAGE */}
               <div className="flex justify-end">
-                <div className="max-w-[80%] bg-neutral-700 rounded-3xl px-5 py-3">
+                <div className="max-w-[80%] bg-sky-600 rounded-3xl px-5 py-3">
                   <p className="text-sm md:text-base whitespace-pre-wrap text-white">
                     {chat.question}
                   </p>

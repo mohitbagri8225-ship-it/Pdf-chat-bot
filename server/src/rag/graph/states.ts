@@ -10,7 +10,6 @@ export const RAGState = Annotation.Root({
         reducer: (_, next) => next,
         default: () => [],
     }),
-
     answer: Annotation<string>({
         reducer: (_, next) => next,
         default: () => "",
